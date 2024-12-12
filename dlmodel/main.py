@@ -8,22 +8,71 @@ from torch.optim.lr_scheduler import StepLR
 from network import Net, TransformerBinaryClassifier
 from dataloader import create_traindataloader
 import pandas as pd
+from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 import re
 import numpy as np
 import json
 from datetime import datetime
-ce = 1
-mse = 1
-l1 = 1
-weight_decay = 0.01
-lr = 0.0000001
+hyperparameters = {
+    'ce_2021_0': 0.1,
+    'mse_2021_0': 0.01,
+    'l1_2021_0': 1,
+    'lr_2021_0': 0.00001,
+    'weight_decay_2021_0': 0.001,
+    'ce_2021_1': 0.1,
+    'mse_2021_1': 0.01,
+    'l1_2021_1': 1,
+    'lr_2021_1': 0.00001,
+    'weight_decay_2021_1': 0.001,
+    'ce_2021_2': 0.1,
+    'mse_2021_2': 0.01,
+    'l1_2021_2': 1,
+    'lr_2021_2': 0.00001,
+    'weight_decay_2021_2': 0.001,
+    'ce_2021_3': 0.1,
+    'mse_2021_3': 0.01,
+    'l1_2021_3': 1,
+    'lr_2021_3': 0.00001,
+    'weight_decay_2021_3': 0.001,
+    'ce_2021_4': 0.1,
+    'mse_2021_4': 0.01,
+    'l1_2021_4': 1,
+    'lr_2021_4': 0.00001,
+    'weight_decay_2021_4': 0.001,
+    'ce_2016_0': 0.1,
+    'mse_2016_0': 0.01,
+    'l1_2016_0': 1,
+    'lr_2016_0': 0.00001,
+    'weight_decay_2016_0': 0.001,
+    'ce_2016_1': 0.1,
+    'mse_2016_1': 0.01,
+    'l1_2016_1': 1,
+    'lr_2016_1': 0.00001,
+    'weight_decay_2016_1': 0.001,
+    'ce_2016_2': 0.1,
+    'mse_2016_2': 0.01,
+    'l1_2016_2': 1,
+    'lr_2016_2': 0.00001,
+    'weight_decay_2016_2': 0.001,
+    'ce_2016_3': 0.1,
+    'mse_2016_3': 0.01,
+    'l1_2016_3': 1,
+    'lr_2016_3': 0.00001,
+    'weight_decay_2016_3': 0.001,
+    'ce_2016_4': 0.1,
+    'mse_2016_4': 0.01,
+    'l1_2016_4': 1,
+    'lr_2016_4': 0.00001,
+    'weight_decay_2016_4': 0.001,
+}
+best_rmse = float('inf')
 
 
-def log_message(message, file_name="log.txt"):
+def log_message(message, args, file_name="log.txt", ):
     print(message)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(file_name, "a") as log_file:
+    with open(file_name.replace('.txt', f'_{args.year}_{args.fold}.txt'), "a") as log_file:
         log_file.write(f"{timestamp} - {message}\n")
 
 
@@ -33,19 +82,21 @@ def train(args, model, device, train_loader, lossfunction, mseloss, l1loss, opti
     test_MSE_loss = 0
     test_l1_loss = 0
     rmse = 0
+    ce = hyperparameters[f"ce_{args.year}_{args.fold}"]
+    mse = hyperparameters[f"mse_{args.year}_{args.fold}"]
+    l1 = hyperparameters[f"l1_{args.year}_{args.fold}"]
+
     for batch_idx, (data, target, score) in enumerate(train_loader):
-        data, target = data.to(device), target.to(device)
+        data, target, score = data.to(
+            device), target.to(device), score.to(device)
         optimizer.zero_grad()
         output = model(data)
         out = torch.argmax(output, dim=1).float()
-        # if batch_idx == 0:
-        #     print('output', torch.argmax(output, dim=1))
-        #     print('target', target)
+
         CE = lossfunction(output, target)*ce
         MSE = mseloss(out, target)*mse
         L1 = l1loss(out, target)*l1
-        predict_score = torch.tensor(
-            [list(range(5, 385, 5))[x] for x in torch.argmax(output, dim=1)])
+        predict_score = torch.argmax(output, dim=1)
         rmse += compute_rmse_torch(score, predict_score)
         test_CE_loss += CE.item()
         test_MSE_loss += MSE.item()
@@ -59,7 +110,10 @@ def train(args, model, device, train_loader, lossfunction, mseloss, l1loss, opti
     rmse /= len(train_loader)
     if epoch % 20 == 0:
         log_message(
-            'Train Epoch:{}\tCELoss: {:.6f}\tMSELoss: {:.6f}\tL1loss: {:.4f}\tAverage RMSE: {:.4f}'.format(epoch, test_CE_loss, test_MSE_loss, test_l1_loss, rmse))
+            'Train Epoch:{}\tCELoss: {:.6f}\tMSELoss: {:.6f}\tL1loss: {:.4f}\tAverage RMSE: {:.4f}'.format(epoch, test_CE_loss, test_MSE_loss, test_l1_loss, rmse), args)
+    if epoch % 100 == 0:
+        print('output', out)
+        print('target', target)
     if args.dry_run:
         return
 
@@ -70,22 +124,23 @@ def compute_rmse_torch(y_true, y_pred):
     return torch.sqrt(torch.mean((y_true - y_pred) ** 2))
 
 
-def test(model, device, test_loader, lossfunction):
+def test(model, device, test_loader, lossfunction, args):
     model.eval()
     test_loss = 0
     rmse = 0
     with torch.no_grad():
         for data, target, score in test_loader:
-            data, target = data.to(device), target.to(device)
+            data, target, score = data.to(
+                device), target.to(device), score.to(device)
             output = model(data)
-            predict_score = torch.tensor(
-                [list(range(5, 385, 5))[x] for x in torch.argmax(output, dim=1)])
+            predict_score = torch.argmax(output, dim=1)
             # sum up batch loss
             rmse += compute_rmse_torch(score, predict_score)
             test_loss += lossfunction(output, target).item()
     test_loss /= len(test_loader)
     rmse /= len(test_loader)
-    log_message('Test set: Average RMSE: {:.4f}\n'.format(rmse))
+    log_message('Test set: Average RMSE: {:.4f}\n'.format(rmse), args)
+    return rmse < best_rmse
 
 
 # def preprocess(csv_file, label_file, predictyear):
@@ -186,7 +241,8 @@ def preprocess_onehot(train_features, train_labels,  predictyear):
     df = df.fillna(-1)
     # df = df.dropna()
     df = df.merge(label, left_index=True, right_on='uid')
-    df.to_csv('test.csv')
+    df.to_csv(
+        f"/STORAGE/peter/PREPARE/dlmodel/processed_onehot_{str(predictyear)}.csv")
     data = df.drop(
         ['year', 'uid'], axis=1)
     return data
@@ -199,10 +255,8 @@ def main():
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=10, metavar='N',
                         help='input batch size for testing (default: 1)')
-    parser.add_argument('--epochs', type=int, default=200000, metavar='N',
+    parser.add_argument('--epochs', type=int, default=400000, metavar='N',
                         help='number of epochs to train (default: 1000)')
-    parser.add_argument('--lr', type=float, default=lr, metavar='LR',
-                        help='learning rate (default: 1)')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
                         help='Learning rate step gamma (default: 0.7)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
@@ -219,10 +273,12 @@ def main():
                         help='Train from the latest status')
     parser.add_argument('--year', type=int, default=2016, metavar='N',
                         help='the survery year')
+    parser.add_argument('--fold', type=int, default=0, metavar='N',
+                        help='the fold to be valid set')
     parser.add_argument('--epoch', type=int, default=-1, metavar='N',)
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
-    checkpoint_path = f'/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}'
+    checkpoint_path = f'/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}_{args.fold}'
     startepoch = 1
     torch.manual_seed(args.seed)
     os.makedirs(checkpoint_path, exist_ok=True)
@@ -231,34 +287,37 @@ def main():
     else:
         device = torch.device("cpu")
     # Load your dataset
-    if not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv') or not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv'):
+    if not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}_{args.fold}.csv') or not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}_{args.fold}.csv'):
         df = preprocess_onehot('/STORAGE/peter/PREPARE/train_features.csv',
                                "/STORAGE/peter/PREPARE/train_labels.csv", args.year)
+        train_shuffle = shuffle(df, random_state=42)
+        # Number of folds
+        k = 5
+        # Split the data into 5 parts (indices)
+        folds = np.array_split(np.arange(len(train_shuffle)), k)
+        valid_df = train_shuffle.iloc[folds[args.fold]]
+        train_df = train_shuffle.iloc[np.setdiff1d(
+            np.arange(len(train_shuffle)), folds[args.fold])]
         # Split the data: 80% for training, 20% for validation
         # train_df, valid_df = train_test_split(
         #     df, test_size=0.1, random_state=1, shuffle=True)
-        # # Save to CSV files
-        # train_df.to_csv(
-        #     f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv', index=False)
-        # valid_df.to_csv(
-        #     f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv', index=False)
-        df.to_csv(
-            f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv', index=False)
-        df.to_csv(
-            f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv', index=False)
-    in_model = len(pd.read_csv(
-        f"/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv").columns)-1
-
+        # Save to CSV files
+        train_df.to_csv(
+            f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}_{args.fold}.csv', index=False)
+        valid_df.to_csv(
+            f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}_{args.fold}.csv', index=False)
     train_loader = create_traindataloader(
-        f"/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv", batch_size=args.batch_size)
+        f"/STORAGE/peter/PREPARE/dlmodel/train_{args.year}_{args.fold}.csv", year=args.year,  batch_size=args.batch_size)
     valid_loader = create_traindataloader(
-        f"/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv", batch_size=args.test_batch_size)
+        f"/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}_{args.fold}.csv", year=args.year, batch_size=args.test_batch_size, )
     # model = TransformerBinaryClassifier(in_model, 384).to(device)
-    model = Net(in_model, 76).to(device)
+    model = Net().to(device)
     loss = nn.CrossEntropyLoss()
     mseloss = nn.MSELoss()
     l1loss = nn.L1Loss()
-    optimizer = optim.SGD(model.parameters(), lr=args.lr,
+    lr = hyperparameters[f"lr_{args.year}_{args.fold}"]
+    weight_decay = hyperparameters[f"weight_decay_{args.year}_{args.fold}"]
+    optimizer = optim.SGD(model.parameters(), lr=lr,
                           weight_decay=weight_decay)
     # scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     # Load the checkpoint
@@ -287,7 +346,8 @@ def main():
             #     checkpoint['scheduler_state_dict'])
             # Load other information like epoch and loss if available
             startepoch = checkpoint.get('epoch', 1)
-            log_message(f"Loaded checkpoint from epoch {startepoch}.")
+            log_message(
+                f"Loaded checkpoint from epoch {startepoch}.", args)
         else:
             largest_epoch = find_largest_epoch(checkpoint_path)
             if largest_epoch:
@@ -301,19 +361,28 @@ def main():
                 #     checkpoint['scheduler_state_dict'])
                 # Load other information like epoch and loss if available
                 startepoch = checkpoint.get('epoch', 1)
-                log_message(f"Loaded checkpoint from epoch {startepoch}.")
+                log_message(
+                    f"Loaded checkpoint from epoch {startepoch}.", args)
     for epoch in range(startepoch, args.epochs + 1):
         train(args, model, device, train_loader,
               loss, mseloss, l1loss, optimizer, epoch)
         if epoch % 100 == 0:
-            test(model, device, valid_loader, loss)
-            if args.save_model and epoch % 100 == 0:
+            result = test(model, device, valid_loader, loss, args)
+            if result:
                 torch.save({
                     'epoch': epoch,
                     'model_state_dict': model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     # 'scheduler_state_dict': scheduler.state_dict(),  # Save scheduler state
-                }, f"/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}/ckpt_{epoch}.pt")
+                }, f"/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}_{args.fold}/best_model.pt")
+
+            if args.save_model:
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    # 'scheduler_state_dict': scheduler.state_dict(),  # Save scheduler state
+                }, f"/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}_{args.fold}/ckpt_{epoch}.pt")
         # scheduler.step()
 
 
