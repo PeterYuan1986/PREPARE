@@ -7,7 +7,7 @@ from torchinfo import summary
 
 
 class Net(nn.Module):
-    def __init__(self, in_model, out_model,  dropout_prob=0.1):
+    def __init__(self, in_model, out_model,  dropout_prob=0.3):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(

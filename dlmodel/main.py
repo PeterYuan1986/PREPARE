@@ -11,30 +11,55 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import re
 import numpy as np
+import json
+from datetime import datetime
+ce = 1
+mse = 1
+l1 = 1
+weight_decay = 0.01
+lr = 0.0000001
 
 
-def train(args, model, device, train_loader, lossfunction, optimizer, epoch):
+def log_message(message, file_name="log.txt"):
+    print(message)
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(file_name, "a") as log_file:
+        log_file.write(f"{timestamp} - {message}\n")
+
+
+def train(args, model, device, train_loader, lossfunction, mseloss, l1loss, optimizer, epoch):
     model.train()
-    test_loss = 0
+    test_CE_loss = 0
+    test_MSE_loss = 0
+    test_l1_loss = 0
     rmse = 0
     for batch_idx, (data, target, score) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
+        out = torch.argmax(output, dim=1).float()
         # if batch_idx == 0:
         #     print('output', torch.argmax(output, dim=1))
         #     print('target', target)
-        loss = lossfunction(output, target)
+        CE = lossfunction(output, target)*ce
+        MSE = mseloss(out, target)*mse
+        L1 = l1loss(out, target)*l1
         predict_score = torch.tensor(
             [list(range(5, 385, 5))[x] for x in torch.argmax(output, dim=1)])
         rmse += compute_rmse_torch(score, predict_score)
-        test_loss += loss.item()
+        test_CE_loss += CE.item()
+        test_MSE_loss += MSE.item()
+        test_l1_loss += L1.item()
+        loss = CE+MSE+L1
         loss.backward()
         optimizer.step()
-    test_loss /= len(train_loader)
+    test_CE_loss /= len(train_loader)
+    test_MSE_loss /= len(train_loader)
+    test_l1_loss /= len(train_loader)
     rmse /= len(train_loader)
-    print(
-        '\nTrain Epoch:{}\tLoss: {:.6f}\tAverage RMSE: {:.4f}\n'.format(epoch, test_loss,  rmse))
+    if epoch % 20 == 0:
+        log_message(
+            'Train Epoch:{}\tCELoss: {:.6f}\tMSELoss: {:.6f}\tL1loss: {:.4f}\tAverage RMSE: {:.4f}'.format(epoch, test_CE_loss, test_MSE_loss, test_l1_loss, rmse))
     if args.dry_run:
         return
 
@@ -60,8 +85,7 @@ def test(model, device, test_loader, lossfunction):
             test_loss += lossfunction(output, target).item()
     test_loss /= len(test_loader)
     rmse /= len(test_loader)
-    print(
-        '\nTest set: Average RMSE: {:.4f}\n'.format(rmse))
+    log_message('Test set: Average RMSE: {:.4f}\n'.format(rmse))
 
 
 # def preprocess(csv_file, label_file, predictyear):
@@ -107,9 +131,26 @@ def test(model, device, test_loader, lossfunction):
 #         ['year', 'uid'], axis=1)
 #     return data
 
-def preprocess_onehot(csv_file, label_file, predictyear):
-    df = pd.read_csv(csv_file)
-    label = pd.read_csv(label_file)
+def preprocess_onehot(train_features, train_labels,  predictyear):
+    dic = {}
+    testing_df = pd.read_csv(train_features)
+    label = pd.read_csv(train_labels)
+    testing_df = testing_df.set_index('uid')
+    str_feature = []
+    for x in testing_df.columns:
+        if testing_df[x].dtype == 'object':
+            str_feature.append(x)
+    df = pd.get_dummies(testing_df, columns=str_feature)
+    for x in df.columns:
+        if df[x].dtype == 'bool':
+            df[x] = df[x].astype('int')
+        dic[x] = {'max': str(df[x].max()), 'min': str(df[x].min())}
+        df[x] = (df[x]-df[x].min())/(df[x].max()-df[x].min())
+    with open('dic.json', 'w') as f:
+        json.dump(dic, f, indent=4)
+    # df['uid'] = df.index
+    # df = pd.read_csv(csv_file)
+    # label = pd.read_csv(label_file)
     label = label[label['year'] == predictyear]
     # features_03 = ['age_03', 'urban_03', 'married_03', 'n_mar_03', 'edu_gru_03', 'n_living_child_03', 'migration_03', 'glob_hlth_03', 'adl_dress_03', 'adl_walk_03', 'adl_bath_03', 'adl_eat_03', 'adl_bed_03', 'adl_toilet_03', 'n_adl_03', 'iadl_money_03', 'iadl_meds_03', 'iadl_shop_03', 'iadl_meals_03', 'n_iadl_03', 'depressed_03', 'hard_03', 'restless_03', 'happy_03', 'lonely_03', 'enjoy_03', 'sad_03', 'tired_03', 'energetic_03', 'n_depr_03', 'cesd_depressed_03', 'hypertension_03', 'diabetes_03', 'resp_ill_03', 'arthritis_03', 'hrt_attack_03', 'stroke_03', 'cancer_03', 'n_illnesses_03', 'bmi_03', 'exer_3xwk_03', 'alcohol_03', 'tobacco_03', 'test_chol_03', 'test_tuber_03', 'test_diab_03', 'test_pres_03', 'hosp_03', 'visit_med_03', 'out_proc_03', 'visit_dental_03', 'imss_03', 'issste_03', 'pem_def_mar_03', 'insur_private_03', 'insur_other_03', 'insured_03', 'decis_famil_03', 'decis_personal_03', 'employment_03', 'sgender_03', 'rjob_hrswk_03',
     #                # 'rjlocc_m_03', 'rjob_end_03', 'rjobend_reason_03',
@@ -144,7 +185,7 @@ def preprocess_onehot(csv_file, label_file, predictyear):
     # df = df.dropna(subset=['age_03'])
     df = df.fillna(-1)
     # df = df.dropna()
-    df = df.merge(label, left_on='uid', right_on='uid')
+    df = df.merge(label, left_index=True, right_on='uid')
     df.to_csv('test.csv')
     data = df.drop(
         ['year', 'uid'], axis=1)
@@ -160,7 +201,7 @@ def main():
                         help='input batch size for testing (default: 1)')
     parser.add_argument('--epochs', type=int, default=200000, metavar='N',
                         help='number of epochs to train (default: 1000)')
-    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
+    parser.add_argument('--lr', type=float, default=lr, metavar='LR',
                         help='learning rate (default: 1)')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
                         help='Learning rate step gamma (default: 0.7)')
@@ -176,8 +217,9 @@ def main():
                         help='For Saving the current Model')
     parser.add_argument('--continue-train', action='store_true',
                         help='Train from the latest status')
-    parser.add_argument('--year', type=int, default=2021, metavar='N',
+    parser.add_argument('--year', type=int, default=2016, metavar='N',
                         help='the survery year')
+    parser.add_argument('--epoch', type=int, default=-1, metavar='N',)
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     checkpoint_path = f'/STORAGE/peter/PREPARE/dlmodel/checkpoints_{args.year}'
@@ -190,15 +232,19 @@ def main():
         device = torch.device("cpu")
     # Load your dataset
     if not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv') or not os.path.isfile(f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv'):
-        df = preprocess_onehot('/STORAGE/peter/PREPARE/train_features_onehot.csv',
+        df = preprocess_onehot('/STORAGE/peter/PREPARE/train_features.csv',
                                "/STORAGE/peter/PREPARE/train_labels.csv", args.year)
         # Split the data: 80% for training, 20% for validation
-        train_df, valid_df = train_test_split(
-            df, test_size=0.2, random_state=1, shuffle=True)
-        # Save to CSV files
-        train_df.to_csv(
+        # train_df, valid_df = train_test_split(
+        #     df, test_size=0.1, random_state=1, shuffle=True)
+        # # Save to CSV files
+        # train_df.to_csv(
+        #     f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv', index=False)
+        # valid_df.to_csv(
+        #     f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv', index=False)
+        df.to_csv(
             f'/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv', index=False)
-        valid_df.to_csv(
+        df.to_csv(
             f'/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}.csv', index=False)
     in_model = len(pd.read_csv(
         f"/STORAGE/peter/PREPARE/dlmodel/train_{args.year}.csv").columns)-1
@@ -210,7 +256,10 @@ def main():
     # model = TransformerBinaryClassifier(in_model, 384).to(device)
     model = Net(in_model, 76).to(device)
     loss = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=args.lr)
+    mseloss = nn.MSELoss()
+    l1loss = nn.L1Loss()
+    optimizer = optim.SGD(model.parameters(), lr=args.lr,
+                          weight_decay=weight_decay)
     # scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     # Load the checkpoint
 
@@ -228,11 +277,9 @@ def main():
         max_epoch = max(epoch_nums) if epoch_nums else None
         return max_epoch
     if args.continue_train:
-        largest_epoch = find_largest_epoch(checkpoint_path)
-        if largest_epoch:
+        if args.epoch > 0:
             checkpoint = torch.load(os.path.join(
-                checkpoint_path, f'ckpt_{largest_epoch}.pt'))
-            # Load states for model, optimizer, and scheduler
+                checkpoint_path, f'ckpt_{str(args.epoch)}.pt'))
             model.load_state_dict(checkpoint['model_state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             # Load scheduler stat
@@ -240,9 +287,24 @@ def main():
             #     checkpoint['scheduler_state_dict'])
             # Load other information like epoch and loss if available
             startepoch = checkpoint.get('epoch', 1)
-            print(f"Loaded checkpoint from epoch {startepoch}.")
+            log_message(f"Loaded checkpoint from epoch {startepoch}.")
+        else:
+            largest_epoch = find_largest_epoch(checkpoint_path)
+            if largest_epoch:
+                checkpoint = torch.load(os.path.join(
+                    checkpoint_path, f'ckpt_{largest_epoch}.pt'))
+                # Load states for model, optimizer, and scheduler
+                model.load_state_dict(checkpoint['model_state_dict'])
+                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                # Load scheduler stat
+                # scheduler.load_state_dict(
+                #     checkpoint['scheduler_state_dict'])
+                # Load other information like epoch and loss if available
+                startepoch = checkpoint.get('epoch', 1)
+                log_message(f"Loaded checkpoint from epoch {startepoch}.")
     for epoch in range(startepoch, args.epochs + 1):
-        train(args, model, device, train_loader, loss, optimizer, epoch)
+        train(args, model, device, train_loader,
+              loss, mseloss, l1loss, optimizer, epoch)
         if epoch % 100 == 0:
             test(model, device, valid_loader, loss)
             if args.save_model and epoch % 100 == 0:

@@ -1,0 +1,10 @@
+# Ignore PyTorch model files
+*.pt
+
+# Ignore model checkpoints or large data files
+checkpoints/
+*.pth
+*.h5
+
+# Ignore logs
+*.log
