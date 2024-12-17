@@ -6,7 +6,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 from network import Net, TransformerBinaryClassifier
-from dataloader import create_traindataloader
+from dataloader import create_traindataloader, labels_2021, labels_2016
 import pandas as pd
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
@@ -15,57 +15,63 @@ import numpy as np
 import json
 from datetime import datetime
 hyperparameters = {
+    # fold 0
     'ce_2021_0': 0.1,
     'mse_2021_0': 0.01,
     'l1_2021_0': 1,
-    'lr_2021_0': 0.00001,
-    'weight_decay_2021_0': 0.001,
-    'ce_2021_1': 0.1,
-    'mse_2021_1': 0.01,
-    'l1_2021_1': 1,
-    'lr_2021_1': 0.00001,
+    'lr_2021_0': 0.0001,
+    'weight_decay_2021_0': 0.01,
+    # fold 1
+    'ce_2021_1': 1,
+    'mse_2021_1': 1,
+    'l1_2021_1': 100,
+    'lr_2021_1': 0.001,
     'weight_decay_2021_1': 0.001,
-    'ce_2021_2': 0.1,
+    # fold 2
+    'ce_2021_2': 0.5,
     'mse_2021_2': 0.01,
     'l1_2021_2': 1,
     'lr_2021_2': 0.00001,
     'weight_decay_2021_2': 0.001,
-    'ce_2021_3': 0.1,
+    # fold 3
+    'ce_2021_3': 0.5,
     'mse_2021_3': 0.01,
     'l1_2021_3': 1,
     'lr_2021_3': 0.00001,
     'weight_decay_2021_3': 0.001,
-    'ce_2021_4': 0.1,
+    # fold 4
+    'ce_2021_4': 0.5,
     'mse_2021_4': 0.01,
     'l1_2021_4': 1,
     'lr_2021_4': 0.00001,
     'weight_decay_2021_4': 0.001,
-    'ce_2016_0': 0.1,
+    'ce_2016_0': 0.5,
     'mse_2016_0': 0.01,
     'l1_2016_0': 1,
     'lr_2016_0': 0.00001,
     'weight_decay_2016_0': 0.001,
-    'ce_2016_1': 0.1,
+    'ce_2016_1': 0.5,
     'mse_2016_1': 0.01,
     'l1_2016_1': 1,
     'lr_2016_1': 0.00001,
     'weight_decay_2016_1': 0.001,
-    'ce_2016_2': 0.1,
+    'ce_2016_2': 0.5,
     'mse_2016_2': 0.01,
     'l1_2016_2': 1,
     'lr_2016_2': 0.00001,
     'weight_decay_2016_2': 0.001,
-    'ce_2016_3': 0.1,
+    'ce_2016_3': 0.5,
     'mse_2016_3': 0.01,
     'l1_2016_3': 1,
     'lr_2016_3': 0.00001,
     'weight_decay_2016_3': 0.001,
-    'ce_2016_4': 0.1,
+    'ce_2016_4': 0.5,
     'mse_2016_4': 0.01,
     'l1_2016_4': 1,
     'lr_2016_4': 0.00001,
     'weight_decay_2016_4': 0.001,
 }
+
 best_rmse = float('inf')
 
 
@@ -85,23 +91,28 @@ def train(args, model, device, train_loader, lossfunction, mseloss, l1loss, opti
     ce = hyperparameters[f"ce_{args.year}_{args.fold}"]
     mse = hyperparameters[f"mse_{args.year}_{args.fold}"]
     l1 = hyperparameters[f"l1_{args.year}_{args.fold}"]
+    if args.year == 2016:
+        labels = labels_2016
+    elif args.year == 2021:
+        labels = labels_2021
 
     for batch_idx, (data, target, score) in enumerate(train_loader):
-        data, target, score = data.to(
-            device), target.to(device), score.to(device)
+        data, target = data.to(
+            device), target.to(device)
         optimizer.zero_grad()
-        output = model(data)
-        out = torch.argmax(output, dim=1).float()
+        output, out = model(data)
+        out = torch.argmax(out, dim=1).float()
 
         CE = lossfunction(output, target)*ce
         MSE = mseloss(out, target)*mse
         L1 = l1loss(out, target)*l1
-        predict_score = torch.argmax(output, dim=1)
+        predict_score = torch.tensor(
+            [labels[x] for x in torch.argmax(output, dim=1)])
         rmse += compute_rmse_torch(score, predict_score)
         test_CE_loss += CE.item()
         test_MSE_loss += MSE.item()
         test_l1_loss += L1.item()
-        loss = CE+MSE+L1
+        loss = L1+CE+MSE
         loss.backward()
         optimizer.step()
     test_CE_loss /= len(train_loader)
@@ -110,10 +121,10 @@ def train(args, model, device, train_loader, lossfunction, mseloss, l1loss, opti
     rmse /= len(train_loader)
     if epoch % 20 == 0:
         log_message(
-            'Train Epoch:{}\tCELoss: {:.6f}\tMSELoss: {:.6f}\tL1loss: {:.4f}\tAverage RMSE: {:.4f}'.format(epoch, test_CE_loss, test_MSE_loss, test_l1_loss, rmse), args)
-    if epoch % 100 == 0:
-        print('output', out)
-        print('target', target)
+            'Train Epoch:{}\tCELoss: {:.4f}\tMSELoss: {:.4f}\tL1loss: {:.2f}\tAverage RMSE: {:.4f}'.format(epoch, test_CE_loss, test_MSE_loss, test_l1_loss, rmse), args)
+    # if epoch % 100 == 0:
+    #     print('output', out)
+    #     print('target', target)
     if args.dry_run:
         return
 
@@ -125,66 +136,72 @@ def compute_rmse_torch(y_true, y_pred):
 
 
 def test(model, device, test_loader, lossfunction, args):
+    if args.year == 2016:
+        labels = labels_2016
+    elif args.year == 2021:
+        labels = labels_2021
     model.eval()
     test_loss = 0
     rmse = 0
     with torch.no_grad():
         for data, target, score in test_loader:
-            data, target, score = data.to(
-                device), target.to(device), score.to(device)
+            data, target = data.to(
+                device), target.to(device)
             output = model(data)
-            predict_score = torch.argmax(output, dim=1)
+            output, out = model(data)
+            predict_score = torch.tensor(
+                [labels[x] for x in torch.argmax(output, dim=1)])
             # sum up batch loss
             rmse += compute_rmse_torch(score, predict_score)
             test_loss += lossfunction(output, target).item()
+    out = torch.argmax(out, dim=1).float()
+    print('ValidSet output', out)
+    print('ValidSet target', target)
     test_loss /= len(test_loader)
     rmse /= len(test_loader)
     log_message('Test set: Average RMSE: {:.4f}\n'.format(rmse), args)
     return rmse < best_rmse
 
 
-# def preprocess(csv_file, label_file, predictyear):
-#     df = pd.read_csv(csv_file)
-#     label = pd.read_csv(label_file)
-#     label = label[label['year'] == predictyear]
-#     features_03 = ['age_03', 'urban_03', 'married_03', 'n_mar_03', 'edu_gru_03', 'n_living_child_03', 'migration_03', 'glob_hlth_03', 'adl_dress_03', 'adl_walk_03', 'adl_bath_03', 'adl_eat_03', 'adl_bed_03', 'adl_toilet_03', 'n_adl_03', 'iadl_money_03', 'iadl_meds_03', 'iadl_shop_03', 'iadl_meals_03', 'n_iadl_03', 'depressed_03', 'hard_03', 'restless_03', 'happy_03', 'lonely_03', 'enjoy_03', 'sad_03', 'tired_03', 'energetic_03', 'n_depr_03', 'cesd_depressed_03', 'hypertension_03', 'diabetes_03', 'resp_ill_03', 'arthritis_03', 'hrt_attack_03', 'stroke_03', 'cancer_03', 'n_illnesses_03', 'bmi_03', 'exer_3xwk_03', 'alcohol_03', 'tobacco_03', 'test_chol_03', 'test_tuber_03', 'test_diab_03', 'test_pres_03', 'hosp_03', 'visit_med_03', 'out_proc_03', 'visit_dental_03', 'imss_03', 'issste_03', 'pem_def_mar_03', 'insur_private_03', 'insur_other_03', 'insured_03', 'decis_famil_03', 'decis_personal_03', 'employment_03', 'sgender_03', 'rjob_hrswk_03',
-#                    # 'rjlocc_m_03', 'rjob_end_03', 'rjobend_reason_03',
-#                    'rearnings_03', 'searnings_03', 'hincome_03', 'hinc_business_03', 'hinc_rent_03', 'hinc_assets_03', 'hinc_cap_03', 'rinc_pension_03', 'sinc_pension_03', 'rrelgimp_03']
+def preprocess(train_features, train_labels,  predictyear):
+    dic = {}
+    testing_df = pd.read_csv(train_features)
+    label = pd.read_csv(train_labels)
+    testing_df = testing_df.set_index('uid')
+    str_feature = []
+    dic['drop_feature'] = []
+    for x in testing_df.columns:
+        ratio = testing_df[x].isna().sum() / len(testing_df[x])
+        if ratio > 0.8:
+            dic['drop_feature'].append(x)
+        else:
+            if testing_df[x].dtype == 'object':
+                str_feature.append(x)
+    df = testing_df.drop(dic['drop_feature'], axis=1)
 
-#     features_12 = ['age_12', 'urban_12', 'married_12', 'n_mar_12', 'edu_gru_12', 'n_living_child_12',
-#                    'migration_12', 'glob_hlth_12', 'adl_dress_12', 'adl_walk_12', 'adl_bath_12', 'adl_eat_12', 'adl_bed_12', 'adl_toilet_12', 'n_adl_12',
-#                    'iadl_money_12', 'iadl_meds_12', 'iadl_shop_12', 'iadl_meals_12', 'n_iadl_12', 'depressed_12', 'hard_12', 'restless_12', 'happy_12', 'lonely_12', 'enjoy_12', 'sad_12', 'tired_12', 'energetic_12', 'n_depr_12', 'cesd_depressed_12', 'hypertension_12', 'diabetes_12', 'resp_ill_12', 'arthritis_12', 'hrt_attack_12', 'stroke_12', 'cancer_12', 'n_illnesses_12', 'bmi_12', 'exer_3xwk_12', 'alcohol_12', 'tobacco_12', 'test_chol_12', 'test_tuber_12', 'test_diab_12', 'test_pres_12', 'hosp_12', 'visit_med_12', 'out_proc_12', 'visit_dental_12',
-#                    'imss_12', 'issste_12', 'pem_def_mar_12', 'insur_private_12', 'insur_other_12', 'seg_pop_12', 'insured_12', 'decis_famil_12', 'decis_personal_12', 'employment_12', 'vax_flu_12', 'vax_pneu_12', 'care_adult_12', 'care_child_12', 'volunteer_12', 'attends_class_12', 'attends_club_12', 'reads_12', 'games_12', 'table_games_12', 'comms_tel_comp_12', 'act_mant_12', 'tv_12', 'sewing_12', 'satis_ideal_12', 'satis_excel_12', 'satis_fine_12', 'cosas_imp_12', 'wouldnt_change_12', 'memory_12', 'sgender_12',
-#                    #    # 'rjob_hrswk_12','rjlocc_m_12', 'rjob_end_12', 'rjobend_reason_12',
-#                    'rearnings_12',
-#                    #    #  'searnings_12',
-#                    'hincome_12', 'hinc_business_12', 'hinc_rent_12', 'hinc_assets_12', 'hinc_cap_12', 'rinc_pension_12', 'sinc_pension_12', 'rrelgimp_12', 'rrfcntx_m_12', 'rsocact_m_12', 'rrelgwk_12',
-#                    #    #    'a16a_12', 'a21_12', 'a22_12', 'a33b_12',
-#                    'a34_12',
-#                    #    #    'j11_12'
-#                    ]
+    def colToNum(value):
+        try:
+            return int(str(value).split('.')[0])
+        except ValueError:
+            return
+    for col in str_feature:
+        df[col] = df[col].apply(colToNum)
+    for x in df.columns:
+        dic[x] = {'max': str(df[x].max()), 'min': str(df[x].min())}
+        df[x] = (df[x]-df[x].min())/(df[x].max()-df[x].min())
 
-#     def colToNum(value):
-#         try:
-#             return int(str(value).split('.')[0])
-#         except ValueError:
-#             return
+    with open('dic.json', 'w') as f:
+        json.dump(dic, f, indent=4)
+    label = label[label['year'] == predictyear]
+    df = df.fillna(-1)
+    # df = df.dropna()
+    df = df.merge(label, left_index=True, right_on='uid')
+    df.to_csv(
+        f"/STORAGE/peter/PREPARE/dlmodel/processed_{str(predictyear)}.csv")
+    data = df.drop(
+        ['year', 'uid'], axis=1)
+    return data
 
-#     for col in features_03+features_12:
-#         if col not in df.columns:
-#             df[col] = -1
-#         else:
-#             if df[col].dtypes == np.object_:
-#                 df[col] = df[col].apply(colToNum)
-#     df = df[['uid']+features_03+features_12]
-#     df = df.dropna(subset=['age_03'])
-#     df = df.fillna(-1)
-#     df = df.dropna()
-#     df = df.merge(label, left_on='uid', right_on='uid')
-#     df.to_csv('test.csv')
-#     data = df.drop(
-#         ['year', 'uid'], axis=1)
-#     return data
 
 def preprocess_onehot(train_features, train_labels,  predictyear):
     dic = {}
@@ -192,52 +209,24 @@ def preprocess_onehot(train_features, train_labels,  predictyear):
     label = pd.read_csv(train_labels)
     testing_df = testing_df.set_index('uid')
     str_feature = []
+    dic['drop_feature'] = []
     for x in testing_df.columns:
-        if testing_df[x].dtype == 'object':
-            str_feature.append(x)
+        ratio = testing_df[x].isna().sum() / len(testing_df[x])
+        if ratio > 0.9:
+            dic['drop_feature'].append(x)
+        else:
+            if testing_df[x].dtype == 'object':
+                str_feature.append(x)
+    testing_df = testing_df.drop(dic['drop_feature'], axis=1)
     df = pd.get_dummies(testing_df, columns=str_feature)
     for x in df.columns:
         if df[x].dtype == 'bool':
             df[x] = df[x].astype('int')
         dic[x] = {'max': str(df[x].max()), 'min': str(df[x].min())}
         df[x] = (df[x]-df[x].min())/(df[x].max()-df[x].min())
-    with open('dic.json', 'w') as f:
+    with open('dic_onehot.json', 'w') as f:
         json.dump(dic, f, indent=4)
-    # df['uid'] = df.index
-    # df = pd.read_csv(csv_file)
-    # label = pd.read_csv(label_file)
     label = label[label['year'] == predictyear]
-    # features_03 = ['age_03', 'urban_03', 'married_03', 'n_mar_03', 'edu_gru_03', 'n_living_child_03', 'migration_03', 'glob_hlth_03', 'adl_dress_03', 'adl_walk_03', 'adl_bath_03', 'adl_eat_03', 'adl_bed_03', 'adl_toilet_03', 'n_adl_03', 'iadl_money_03', 'iadl_meds_03', 'iadl_shop_03', 'iadl_meals_03', 'n_iadl_03', 'depressed_03', 'hard_03', 'restless_03', 'happy_03', 'lonely_03', 'enjoy_03', 'sad_03', 'tired_03', 'energetic_03', 'n_depr_03', 'cesd_depressed_03', 'hypertension_03', 'diabetes_03', 'resp_ill_03', 'arthritis_03', 'hrt_attack_03', 'stroke_03', 'cancer_03', 'n_illnesses_03', 'bmi_03', 'exer_3xwk_03', 'alcohol_03', 'tobacco_03', 'test_chol_03', 'test_tuber_03', 'test_diab_03', 'test_pres_03', 'hosp_03', 'visit_med_03', 'out_proc_03', 'visit_dental_03', 'imss_03', 'issste_03', 'pem_def_mar_03', 'insur_private_03', 'insur_other_03', 'insured_03', 'decis_famil_03', 'decis_personal_03', 'employment_03', 'sgender_03', 'rjob_hrswk_03',
-    #                # 'rjlocc_m_03', 'rjob_end_03', 'rjobend_reason_03',
-    #                'rearnings_03', 'searnings_03', 'hincome_03', 'hinc_business_03', 'hinc_rent_03', 'hinc_assets_03', 'hinc_cap_03', 'rinc_pension_03', 'sinc_pension_03', 'rrelgimp_03']
-
-    # features_12 = ['age_12', 'urban_12', 'married_12', 'n_mar_12', 'edu_gru_12', 'n_living_child_12',
-    #                'migration_12', 'glob_hlth_12', 'adl_dress_12', 'adl_walk_12', 'adl_bath_12', 'adl_eat_12', 'adl_bed_12', 'adl_toilet_12', 'n_adl_12',
-    #                'iadl_money_12', 'iadl_meds_12', 'iadl_shop_12', 'iadl_meals_12', 'n_iadl_12', 'depressed_12', 'hard_12', 'restless_12', 'happy_12', 'lonely_12', 'enjoy_12', 'sad_12', 'tired_12', 'energetic_12', 'n_depr_12', 'cesd_depressed_12', 'hypertension_12', 'diabetes_12', 'resp_ill_12', 'arthritis_12', 'hrt_attack_12', 'stroke_12', 'cancer_12', 'n_illnesses_12', 'bmi_12', 'exer_3xwk_12', 'alcohol_12', 'tobacco_12', 'test_chol_12', 'test_tuber_12', 'test_diab_12', 'test_pres_12', 'hosp_12', 'visit_med_12', 'out_proc_12', 'visit_dental_12',
-    #                'imss_12', 'issste_12', 'pem_def_mar_12', 'insur_private_12', 'insur_other_12', 'seg_pop_12', 'insured_12', 'decis_famil_12', 'decis_personal_12', 'employment_12', 'vax_flu_12', 'vax_pneu_12', 'care_adult_12', 'care_child_12', 'volunteer_12', 'attends_class_12', 'attends_club_12', 'reads_12', 'games_12', 'table_games_12', 'comms_tel_comp_12', 'act_mant_12', 'tv_12', 'sewing_12', 'satis_ideal_12', 'satis_excel_12', 'satis_fine_12', 'cosas_imp_12', 'wouldnt_change_12', 'memory_12', 'sgender_12',
-    #                #    # 'rjob_hrswk_12','rjlocc_m_12', 'rjob_end_12', 'rjobend_reason_12',
-    #                'rearnings_12',
-    #                #    #  'searnings_12',
-    #                'hincome_12', 'hinc_business_12', 'hinc_rent_12', 'hinc_assets_12', 'hinc_cap_12', 'rinc_pension_12', 'sinc_pension_12', 'rrelgimp_12', 'rrfcntx_m_12', 'rsocact_m_12', 'rrelgwk_12',
-    #                #    #    'a16a_12', 'a21_12', 'a22_12', 'a33b_12',
-    #                'a34_12',
-    #                #    #    'j11_12'
-    #                ]
-
-    # def colToNum(value):
-    #     try:
-    #         return int(str(value).split('.')[0])
-    #     except ValueError:
-    #         return
-
-    # for col in features_03+features_12:
-    #     if col not in df.columns:
-    #         df[col] = -1
-    #     else:
-    #         if df[col].dtypes == np.object_:
-    #             df[col] = df[col].apply(colToNum)
-    # df = df[['uid']+features_03+features_12]
-    # df = df.dropna(subset=['age_03'])
     df = df.fillna(-1)
     # df = df.dropna()
     df = df.merge(label, left_index=True, right_on='uid')
@@ -251,9 +240,9 @@ def preprocess_onehot(train_features, train_labels,  predictyear):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PREPARE Social Determinants')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+    parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                         help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=10, metavar='N',
+    parser.add_argument('--test-batch-size', type=int, default=20, metavar='N',
                         help='input batch size for testing (default: 1)')
     parser.add_argument('--epochs', type=int, default=400000, metavar='N',
                         help='number of epochs to train (default: 1000)')
@@ -311,7 +300,12 @@ def main():
     valid_loader = create_traindataloader(
         f"/STORAGE/peter/PREPARE/dlmodel/valid_{args.year}_{args.fold}.csv", year=args.year, batch_size=args.test_batch_size, )
     # model = TransformerBinaryClassifier(in_model, 384).to(device)
-    model = Net().to(device)
+    if args.year == 2016:
+        out_model = len(labels_2016)
+    elif args.year == 2021:
+        out_model = len(labels_2021)
+# one-hot process  in_model=310  otherwise  in_model=174
+    model = Net(in_model=310, out_model=out_model).to(device)
     loss = nn.CrossEntropyLoss()
     mseloss = nn.MSELoss()
     l1loss = nn.L1Loss()
@@ -363,6 +357,7 @@ def main():
                 startepoch = checkpoint.get('epoch', 1)
                 log_message(
                     f"Loaded checkpoint from epoch {startepoch}.", args)
+
     for epoch in range(startepoch, args.epochs + 1):
         train(args, model, device, train_loader,
               loss, mseloss, l1loss, optimizer, epoch)

@@ -7,25 +7,30 @@ from torchinfo import summary
 
 
 class Net(nn.Module):
-    def __init__(self, in_model=340, out_model=384,  dropout_prob=0.5):
+    def __init__(self, in_model=298, out_model=384,  dropout_prob=0.6):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(in_model, 512),
             # Layer normalization after Linear layer
-            nn.LayerNorm(512),
-            nn.ReLU(),
+            nn.BatchNorm1d(512),
+            nn.LeakyReLU(),
             nn.Dropout(dropout_prob),       # Dropout after ReLU
             nn.Linear(512, 1028),
-            nn.ReLU(),
+            nn.BatchNorm1d(1028),
+            nn.LeakyReLU(),
+            nn.Dropout(dropout_prob),       # Dropout after ReLU
             nn.Linear(1028, 2056),
-            nn.ReLU(),
+            nn.BatchNorm1d(2056),
+            nn.LeakyReLU(),
             nn.Dropout(dropout_prob),       # Dropout after ReLU
             nn.Linear(2056, 1028),
-            nn.ReLU(),
+            nn.BatchNorm1d(1028),
+            nn.LeakyReLU(),
             nn.Dropout(dropout_prob),       # Dropout after ReLU
             nn.Linear(1028, 512),
-            nn.ReLU(),
+            nn.BatchNorm1d(512),
+            nn.LeakyReLU(),
             nn.Linear(512, out_model),
         )
         self.softmax = nn.Softmax(dim=1)
@@ -33,15 +38,14 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.flatten(x)
         x = self.linear_relu_stack(x)
-        # Apply sigmoid to each of the 343 outputs
-        # x = self.softmax(x)
+        y = self.softmax(x)
         # x = torch.round(x)
         # Sum along the feature dimension
-        return x
+        return x, y
 
 
 class TransformerBinaryClassifier(nn.Module):
-    def __init__(self, input_dim=169, output_dim=384, d_model=128, nhead=4, num_layers=5):
+    def __init__(self, input_dim=340, out_model=384, d_model=128, nhead=4, num_layers=5):
         super(TransformerBinaryClassifier, self).__init__()
 
         # Expand the input tensor from [batch_size, 169] to [batch_size, 169, d_model] with an embedding layer
@@ -55,7 +59,7 @@ class TransformerBinaryClassifier(nn.Module):
             encoder_layer, num_layers=num_layers)
 
         # Linear layer to transform to output shape [batch_size, 384]
-        self.fc_out = nn.Linear(input_dim * d_model, output_dim)
+        self.fc_out = nn.Linear(input_dim * d_model, out_model)
 
         # Sigmoid for binary classification
         self.sigmoid = nn.Sigmoid()
@@ -82,7 +86,7 @@ class TransformerBinaryClassifier(nn.Module):
         # Output layer to get [batch_size, 384]
         x = self.fc_out(x)  # Shape: [batch_size, 384]
         # Apply sigmoid for binary output
-        x = self.sigmoid(x)
+        # x = self.sigmoid(x)
         # x = torch.round(x)
         # Sum along the feature dimension
         return torch.sum(x, dim=1)

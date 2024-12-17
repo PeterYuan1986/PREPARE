@@ -1,0 +1,1205 @@
+{
+    "drop_feature": [
+        "rjlocc_m_03",
+        "rjob_end_03",
+        "rjobend_reason_03",
+        "rjob_end_12",
+        "rjobend_reason_12",
+        "a16a_12",
+        "a21_12",
+        "a22_12",
+        "a33b_12"
+    ],
+    "n_mar_03": {
+        "max": "5.0",
+        "min": "0.0"
+    },
+    "migration_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_dress_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_walk_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_bath_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_eat_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_bed_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_toilet_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_adl_03": {
+        "max": "5.0",
+        "min": "0.0"
+    },
+    "iadl_money_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_meds_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_shop_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_meals_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_iadl_03": {
+        "max": "4.0",
+        "min": "0.0"
+    },
+    "depressed_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hard_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "restless_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "happy_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "lonely_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "enjoy_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "sad_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "tired_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "energetic_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_depr_03": {
+        "max": "9.0",
+        "min": "0.0"
+    },
+    "cesd_depressed_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hypertension_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "diabetes_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "resp_ill_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "arthritis_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hrt_attack_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "stroke_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "cancer_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_illnesses_03": {
+        "max": "5.0",
+        "min": "0.0"
+    },
+    "exer_3xwk_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "alcohol_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "tobacco_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_chol_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_tuber_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_diab_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_pres_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hosp_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "visit_med_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "out_proc_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "visit_dental_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "imss_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "issste_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "pem_def_mar_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insur_private_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insur_other_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insured_03": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "decis_personal_03": {
+        "max": "3.0",
+        "min": "1.0"
+    },
+    "n_mar_12": {
+        "max": "7.0",
+        "min": "0.0"
+    },
+    "migration_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_dress_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_walk_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_bath_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_eat_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_bed_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "adl_toilet_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_adl_12": {
+        "max": "5.0",
+        "min": "0.0"
+    },
+    "iadl_money_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_meds_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_shop_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "iadl_meals_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_iadl_12": {
+        "max": "4.0",
+        "min": "0.0"
+    },
+    "depressed_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hard_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "restless_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "happy_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "lonely_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "enjoy_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "sad_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "tired_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "energetic_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_depr_12": {
+        "max": "9.0",
+        "min": "0.0"
+    },
+    "cesd_depressed_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hypertension_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "diabetes_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "resp_ill_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "arthritis_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hrt_attack_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "stroke_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "cancer_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "n_illnesses_12": {
+        "max": "5.0",
+        "min": "0.0"
+    },
+    "exer_3xwk_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "alcohol_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "tobacco_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_chol_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_tuber_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_diab_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "test_pres_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "hosp_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "visit_med_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "out_proc_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "visit_dental_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "imss_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "issste_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "pem_def_mar_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insur_private_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insur_other_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "insured_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "vax_flu_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "vax_pneu_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "seg_pop_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "care_adult_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "care_child_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "volunteer_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "attends_class_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "attends_club_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "reads_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "games_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "table_games_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "comms_tel_comp_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "act_mant_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "tv_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "sewing_12": {
+        "max": "1.0",
+        "min": "0.0"
+    },
+    "rjob_hrswk_03": {
+        "max": "99.0",
+        "min": "1.0"
+    },
+    "rearnings_03": {
+        "max": "384000.0",
+        "min": "0.0"
+    },
+    "searnings_03": {
+        "max": "960000.0",
+        "min": "0.0"
+    },
+    "hincome_03": {
+        "max": "2550000.0",
+        "min": "-30000.0"
+    },
+    "hinc_business_03": {
+        "max": "1320000.0",
+        "min": "0.0"
+    },
+    "hinc_rent_03": {
+        "max": "900000.0",
+        "min": "-100000.0"
+    },
+    "hinc_assets_03": {
+        "max": "40000.0",
+        "min": "0.0"
+    },
+    "hinc_cap_03": {
+        "max": "2150000.0",
+        "min": "-30000.0"
+    },
+    "rinc_pension_03": {
+        "max": "480000.0",
+        "min": "0.0"
+    },
+    "sinc_pension_03": {
+        "max": "360000.0",
+        "min": "0.0"
+    },
+    "rjob_hrswk_12": {
+        "max": "168.0",
+        "min": "0.0"
+    },
+    "rearnings_12": {
+        "max": "1160000.0",
+        "min": "0.0"
+    },
+    "searnings_12": {
+        "max": "1370000.0",
+        "min": "0.0"
+    },
+    "hincome_12": {
+        "max": "36020000.0",
+        "min": "-190000.0"
+    },
+    "hinc_business_12": {
+        "max": "36000000.0",
+        "min": "0.0"
+    },
+    "hinc_rent_12": {
+        "max": "1200000.0",
+        "min": "-360000.0"
+    },
+    "hinc_assets_12": {
+        "max": "360000.0",
+        "min": "0.0"
+    },
+    "hinc_cap_12": {
+        "max": "36000000.0",
+        "min": "-210000.0"
+    },
+    "rinc_pension_12": {
+        "max": "960000.0",
+        "min": "0.0"
+    },
+    "sinc_pension_12": {
+        "max": "1200000.0",
+        "min": "0.0"
+    },
+    "age_03_0. 49 or younger": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_03_1. 50\u201359": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_03_2. 60\u201369": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_03_3. 70\u201379": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_03_4. 80+": {
+        "max": "1",
+        "min": "0"
+    },
+    "urban_03_0. <100,000": {
+        "max": "1",
+        "min": "0"
+    },
+    "urban_03_1. 100,000+": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_03_1. Married or in civil union": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_03_2. Separated or divorced": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_03_3. Widowed": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_03_4. Single": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_03_0. No education": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_03_1. 1\u20135 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_03_2. 6 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_03_3. 7\u20139 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_03_4. 10+ years": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_03_0. No children": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_03_1. 1 or 2": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_03_2. 3 or 4": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_03_3. 5 or 6": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_03_4. 7+": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_03_1. Excellent": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_03_2. Very good": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_03_3. Good": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_03_4. Fair": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_03_5. Poor": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_03_1. Underweight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_03_2. Normal weight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_03_3. Overweight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_03_4. Obese": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_03_5. Morbidly obese": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_03_1. Respondent": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_03_2. Approximately equal weight": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_03_3. Spouse": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_03_1. Currently Working": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_03_2. Currently looking for work": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_03_3. Dedicated to household chores": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_03_4. Retired, incapacitated, or does not work": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_12_0. 49 or younger": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_12_1. 50\u201359": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_12_2. 60\u201369": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_12_3. 70\u201379": {
+        "max": "1",
+        "min": "0"
+    },
+    "age_12_4. 80+": {
+        "max": "1",
+        "min": "0"
+    },
+    "urban_12_0. <100,000": {
+        "max": "1",
+        "min": "0"
+    },
+    "urban_12_1. 100,000+": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_12_1. Married or in civil union": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_12_2. Separated or divorced": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_12_3. Widowed": {
+        "max": "1",
+        "min": "0"
+    },
+    "married_12_4. Single": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_12_0. No education": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_12_1. 1\u20135 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_12_2. 6 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_12_3. 7\u20139 years": {
+        "max": "1",
+        "min": "0"
+    },
+    "edu_gru_12_4. 10+ years": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_12_0. No children": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_12_1. 1 or 2": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_12_2. 3 or 4": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_12_3. 5 or 6": {
+        "max": "1",
+        "min": "0"
+    },
+    "n_living_child_12_4. 7+": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_12_1. Excellent": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_12_2. Very good": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_12_3. Good": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_12_4. Fair": {
+        "max": "1",
+        "min": "0"
+    },
+    "glob_hlth_12_5. Poor": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_12_1. Underweight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_12_2. Normal weight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_12_3. Overweight": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_12_4. Obese": {
+        "max": "1",
+        "min": "0"
+    },
+    "bmi_12_5. Morbidly obese": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_12_1. Respondent": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_12_2. Approximately equal weight": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_famil_12_3. Spouse": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_personal_12_1. A lot": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_personal_12_2. A little": {
+        "max": "1",
+        "min": "0"
+    },
+    "decis_personal_12_3. None": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_12_1. Currently Working": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_12_2. Currently looking for work": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_12_3. Dedicated to household chores": {
+        "max": "1",
+        "min": "0"
+    },
+    "employment_12_4. Retired, incapacitated, or does not work": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_ideal_12_1. Agrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_ideal_12_2. Neither agrees nor disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_ideal_12_3. Disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_excel_12_1. Agrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_excel_12_2. Neither agrees nor disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_excel_12_3. Disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_fine_12_1. Agrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_fine_12_2. Neither agrees nor disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "satis_fine_12_3. Disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "cosas_imp_12_1. Agrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "cosas_imp_12_2. Neither agrees nor disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "cosas_imp_12_3. Disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "wouldnt_change_12_1. Agrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "wouldnt_change_12_2. Neither agrees nor disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "wouldnt_change_12_3. Disagrees": {
+        "max": "1",
+        "min": "0"
+    },
+    "memory_12_1. Excellent": {
+        "max": "1",
+        "min": "0"
+    },
+    "memory_12_2. Very good": {
+        "max": "1",
+        "min": "0"
+    },
+    "memory_12_3. Good": {
+        "max": "1",
+        "min": "0"
+    },
+    "memory_12_4. Fair": {
+        "max": "1",
+        "min": "0"
+    },
+    "memory_12_5. Poor": {
+        "max": "1",
+        "min": "0"
+    },
+    "ragender_1.Man": {
+        "max": "1",
+        "min": "0"
+    },
+    "ragender_2.Woman": {
+        "max": "1",
+        "min": "0"
+    },
+    "rameduc_m_1.None": {
+        "max": "1",
+        "min": "0"
+    },
+    "rameduc_m_2.Some primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "rameduc_m_3.Primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "rameduc_m_4.More than primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "rafeduc_m_1.None": {
+        "max": "1",
+        "min": "0"
+    },
+    "rafeduc_m_2.Some primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "rafeduc_m_3.Primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "rafeduc_m_4.More than primary": {
+        "max": "1",
+        "min": "0"
+    },
+    "sgender_03_1.Man": {
+        "max": "1",
+        "min": "0"
+    },
+    "sgender_03_2.Woman": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_03_1.very important": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_03_2.somewhat important": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_03_3.not important": {
+        "max": "1",
+        "min": "0"
+    },
+    "sgender_12_1.Man": {
+        "max": "1",
+        "min": "0"
+    },
+    "sgender_12_2.Woman": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_1.Professionals": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_10.Asst/Laborers etc in Ind. Production, Repair, Maintenance": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_11.Drivers and Asst Drivers of Mobile Machinery and Transport Vehicles": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_12.Department Heads/Coordinators/Supervisors in Admin and Service Activities": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_13.Administrative Support Staff": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_14.Merchants and Sales Representatives": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_15.Traveling Salespeople and Traveling Salespeople of Services": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_16.Workers in the Service Industry": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_17.Domestic Workers": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_18.Safety and Security Personnel": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_2.Technicians": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_3.Educators": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_4.Workers in Art, Shows, and Sports": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_5.Officials and Directors Public, Private, and Social Sectors": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_6.Workers in Agriculture, Livestock, Forestry, and Fishing": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_7.Bosses/Supervisors etc in Artistic, Ind. Production, Repair, Maintenance Activities": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_8.Artisans and Workers in Production, Repair, Maintenance": {
+        "max": "1",
+        "min": "0"
+    },
+    "rjlocc_m_12_9.Operators of Fixed Machinery and Equipment for Ind. Production": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_12_1.very important": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_12_2.somewhat important": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgimp_12_3.not important": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_1.Almost every day": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_2.4 or more times a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_3.2 or 3 times a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_4.Once a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_5.4 or more times a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_6.2 or 3 times a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_7.Once a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_8.Almost Never, sporadic": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrfcntx_m_12_9.Never": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_1.Almost every day": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_2.4 or more times a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_3.2 or 3 times a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_4.Once a week": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_5.4 or more times a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_6.2 or 3 times a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_7.Once a month": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_8.Almost Never, sporadic": {
+        "max": "1",
+        "min": "0"
+    },
+    "rsocact_m_12_9.Never": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgwk_12_0.No": {
+        "max": "1",
+        "min": "0"
+    },
+    "rrelgwk_12_1.Yes": {
+        "max": "1",
+        "min": "0"
+    },
+    "a34_12_No 2": {
+        "max": "1",
+        "min": "0"
+    },
+    "a34_12_Yes 1": {
+        "max": "1",
+        "min": "0"
+    },
+    "j11_12_Concrete 2": {
+        "max": "1",
+        "min": "0"
+    },
+    "j11_12_Mud 3": {
+        "max": "1",
+        "min": "0"
+    },
+    "j11_12_Wood, mosaic, or other covering 1": {
+        "max": "1",
+        "min": "0"
+    }
+}
